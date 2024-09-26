@@ -6,7 +6,6 @@ export const createUser = async (ctx) => {
   try {
     const { email, password, displayName } = ctx.request.body;
 
-    // Crear el usuario en Firebase Authentication
     const userRecord = await admin.auth().createUser({
       email: email,
       password: password,
@@ -40,16 +39,13 @@ export const createUser = async (ctx) => {
   }
 };
 
+//loguear usuario POST
 
-
-// Loguear usuario usando el token de ID
 export const loginUser = async (ctx) => {
   try {
-    const { token } = ctx.request.body; // Asegúrate de que estás accediendo al token
+    const { email, password } = ctx.request.body;
 
-    // Verifica el token de ID
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    const userRecord = await admin.auth().getUser(decodedToken.uid);
+    const userRecord = await admin.auth().getUserByEmail(email);
 
     ctx.body = {
       message: "Usuario logueado",
