@@ -53,6 +53,7 @@ export const loginUser = async (ctx) => {
         uid: userRecord.uid,
         email: userRecord.email,
         displayName: userRecord.displayName,
+        password: password,
         createdAt: userRecord.metadata.creationTime,
       },
     };
