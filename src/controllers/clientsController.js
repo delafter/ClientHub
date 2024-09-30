@@ -12,9 +12,21 @@ export const signupClient = async (ctx) => {
       direccion,
       fechaCreacion,
       revista,
-      importe,
+      importe, // Recibido como string
       comercial,
     } = ctx.request.body;
+
+    // Convertir importe a número entero
+    const importeNumber = parseInt(importe, 10); // 10 es la base del sistema numérico (decimal)
+
+    // Verificar si es un número entero válido
+    if (isNaN(importeNumber)) {
+      ctx.status = 400;
+      ctx.body = {
+        message: "El importe debe ser un número entero válido.",
+      };
+      return;
+    }
 
     // Referencia a la base de datos
     const db = admin.database();
@@ -26,7 +38,7 @@ export const signupClient = async (ctx) => {
       ctx.status = 400; // Bad Request
       ctx.body = {
         message: "Error creando cliente",
-        error: "Ya existe un cliente con ese correo electrónico.",
+        error: "El cliente ya existe con esa revista",
       };
       return;
     }
@@ -34,13 +46,14 @@ export const signupClient = async (ctx) => {
     // Guarda el cliente en la base de datos
     const newClientRef = clientRef.push(); // Crea una nueva referencia para el cliente
     await newClientRef.set({
+      id: newClientRef.key,
       cliente: cliente,
       email: email,
       telefono: telefono,
       direccion: direccion,
       fechaCreacion: fechaCreacion,
       revista: revista,
-      importe: importe,
+      importe: importeNumber, // Almacenar como número entero
       comercial: comercial,
     });
 
@@ -54,7 +67,7 @@ export const signupClient = async (ctx) => {
         direccion: direccion,
         fechaCreacion: fechaCreacion,
         revista: revista,
-        importe: importe,
+        importe: importeNumber, // Almacenar como número entero
         comercial: comercial,
       },
     };
@@ -66,6 +79,7 @@ export const signupClient = async (ctx) => {
     };
   }
 };
+
 
 // Obtener todos los clientes de un usuario GET
 
