@@ -6,7 +6,7 @@ import admin from "firebase-admin";
 import serviceAccount from "../src/keys/client-database-68929-firebase-adminsdk-h83tf-d8fedd45a0.json" assert { type: "json" };
 import cors from "@koa/cors";
 import { createUser, loginUser } from "./controllers/authController.js";
-import { createClient, getClients } from "./controllers/clientsController.js";
+import { signupClient, getClients, deleteClient, updateClient } from "./controllers/clientsController.js";
 
 dotenv.config();
 
@@ -28,8 +28,10 @@ router.get("/", (ctx) => {
 // Ruta para obtener datos de Firebase
 router.post("/signup", createUser);
 router.post("/login", loginUser);
-router.post("/signupClient/:uid", createClient);
+router.post("/signupClient/:uid", signupClient);
 router.get("/getClients/:uid", getClients);
+router.delete("/deleteClient/:uid/:clientId", deleteClient);
+router.patch("/updateClient/:uid/:clientId", updateClient);
 
 app.use(router.routes()).use(router.allowedMethods());
 

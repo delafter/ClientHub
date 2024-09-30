@@ -1,7 +1,7 @@
 import admin from "firebase-admin";
 
 // Crear nuevo cliente por id de usuario POST
-export const createClient = async (ctx) => {
+export const signupClient = async (ctx) => {
   const uid = ctx.params.uid; // Obtiene el uid de los parámetros de la URL
 
   try {
@@ -101,4 +101,101 @@ export const getClients = async (ctx) => {
     }
   };
   
+  // elimminar cliente por id de usuario y id de cliente DELETE
+
+  export const deleteClient = async (ctx) => {
+    const uid = ctx.params.uid; // UID del usuario
+    const clientId = ctx.params.clientId; // ID del cliente a eliminar
   
+    try {
+      const db = admin.database();
+      const clientRef = db.ref("clients").child(uid).child(clientId);
+      const clientSnapshot = await clientRef.once("value");
+  
+      if (!clientSnapshot.exists()) {
+        ctx.status = 404;
+        ctx.body = {
+          message: "Cliente no encontrado",
+        };
+        return;
+      }
+  
+      await clientRef.remove(); // Elimina el cliente de la base de datos
+  
+      ctx.body = {
+        message: "Cliente eliminado",
+      };
+    } catch (error) {
+      console.error("Error en deleteClient:", error);
+      ctx.status = 400;
+      ctx.body = {
+        message: "Error eliminando el cliente",
+        error: error.message,
+      };
+    }
+  };
+
+  // Actualizar cliente por id de usuario y id de cliente PUT
+
+  export const updateClient = async (ctx) => {
+    const uid = ctx.params.uid; // UID del usuario
+    const clientId = ctx.params.clientId; // ID del cliente a actualizar
+  
+    try {
+      const db = admin.database();
+      const clientRef = db.ref("clients").child(uid).child(clientId);
+      const clientSnapshot = await clientRef.once("value");
+  
+      if (!clientSnapshot.exists()) {
+        ctx.status = 404;
+        ctx.body = {
+          message: "Cliente no encontrado",
+        };
+        return;
+      }
+  
+      const {
+        cliente,
+        email,
+        telefono,
+        direccion,
+        fechaCreacion,
+        revista,
+        importe,
+        comercial,
+      } = ctx.request.body;
+  
+      await clientRef.update({
+        cliente: cliente,
+        email: email,
+        telefono: telefono,
+        direccion: direccion,
+        fechaCreacion: fechaCreacion,
+        revista: revista,
+        importe: importe,
+        comercial: comercial,
+      });
+  
+      ctx.body = {
+        message: "Cliente actualizado",
+        client: {
+          id: clientId,
+          cliente: cliente,
+          email: email,
+          telefono: telefono,
+          direccion: direccion,
+          fechaCreacion: fechaCreacion,
+          revista: revista,
+          importe: importe,
+          comercial: comercial,
+        },
+      };
+    } catch (error) {
+      console.error("Error en updateClient:", error);
+      ctx.status = 400;
+      ctx.body = {
+        message: "Error actualizando el cliente",
+        error: error.message,
+      };
+    }
+  };
