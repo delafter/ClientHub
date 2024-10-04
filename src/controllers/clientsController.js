@@ -14,6 +14,7 @@ export const signupClient = async (ctx) => {
       revista,
       importe, // Recibido como string
       comercial,
+      formaDePago
     } = ctx.request.body;
 
     // Convertir importe a número entero
@@ -55,6 +56,7 @@ export const signupClient = async (ctx) => {
       revista: revista,
       importe: importeNumber, // Almacenar como número entero
       comercial: comercial,
+      formaDePago: formaDePago
     });
 
     ctx.body = {
@@ -69,6 +71,7 @@ export const signupClient = async (ctx) => {
         revista: revista,
         importe: importeNumber, // Almacenar como número entero
         comercial: comercial,
+        formaDePago: formaDePago
       },
     };
   } catch (error) {
@@ -177,6 +180,7 @@ export const getClients = async (ctx) => {
         revista,
         importe,
         comercial,
+        formaDePago
       } = ctx.request.body;
   
       await clientRef.update({
@@ -188,6 +192,7 @@ export const getClients = async (ctx) => {
         revista: revista,
         importe: importe,
         comercial: comercial,
+        formaDePago: formaDePago
       });
   
       ctx.body = {
@@ -202,6 +207,7 @@ export const getClients = async (ctx) => {
           revista: revista,
           importe: importe,
           comercial: comercial,
+          formaDePago: formaDePago
         },
       };
     } catch (error) {
