@@ -20,7 +20,7 @@ export const signupClient = async (ctx) => {
     // Convertir importe a número entero
     const importeNumber = parseInt(importe, 10); // 10 es la base del sistema numérico (decimal)
 
-    // Verificar si es un número entero válido
+   
     if (isNaN(importeNumber)) {
       ctx.status = 400;
       ctx.body = {
