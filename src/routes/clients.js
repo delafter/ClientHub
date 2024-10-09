@@ -6,7 +6,7 @@ import {
   deleteClient,
 } from "../controllers/clientsController.js";
 
-const router = new Router(); 
+const router = new Router();  
 
 router.post("/signupClient/:uid", signupClient);
 router.get("/getClients/:uid", getClients);

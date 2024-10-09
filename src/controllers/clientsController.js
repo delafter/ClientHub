@@ -12,7 +12,7 @@ export const signupClient = async (ctx) => {
       direccion,
       fechaCreacion,
       revista,
-      importe, // Recibido como string
+      importe, 
       comercial,
       formaDePago
     } = ctx.request.body;
