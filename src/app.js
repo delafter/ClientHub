@@ -3,10 +3,15 @@ import Router from "koa-router";
 import bodyParser from "koa-bodyparser";
 import dotenv from "dotenv";
 import admin from "firebase-admin";
-import serviceAccount from "../src/keys/client-database-68929-firebase-adminsdk-h83tf-d8fedd45a0.json" assert { type: "json" };
+const serviceAccount = require("../keys/client-database-68929-firebase-adminsdk-h83tf-d8fedd45a0.json");
 import cors from "@koa/cors";
 import { createUser, loginUser } from "./controllers/authController.js";
-import { signupClient, getClients, deleteClient, updateClient } from "./controllers/clientsController.js";
+import {
+  signupClient,
+  getClients,
+  deleteClient,
+  updateClient,
+} from "./controllers/clientsController.js";
 
 dotenv.config();
 

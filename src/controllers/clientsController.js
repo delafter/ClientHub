@@ -27,7 +27,7 @@ export const signupClient = async (ctx) => {
         message: "El importe debe ser un número entero válido.",
       };
       return;
-    }
+    } 
 
     // Referencia a la base de datos
     const db = admin.database();
