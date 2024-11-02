@@ -12,29 +12,30 @@ export const signupClient = async (ctx) => {
       direccion,
       fechaCreacion,
       revista,
-      importe, 
+      importe,
       comercial,
-      formaDePago
+      formaDePago,
     } = ctx.request.body;
 
-    // Convertir importe a número entero
     const importeNumber = parseInt(importe, 10); // 10 es la base del sistema numérico (decimal)
 
-   
     if (isNaN(importeNumber)) {
       ctx.status = 400;
       ctx.body = {
         message: "El importe debe ser un número entero válido.",
       };
       return;
-    } 
+    }
 
     // Referencia a la base de datos
     const db = admin.database();
     const clientRef = db.ref("clients").child(uid);
 
     // Verifica si el cliente ya existe (usando el email como identificador único)
-    const existingClientSnapshot = await clientRef.orderByChild('revista').equalTo(revista).once("value");
+    const existingClientSnapshot = await clientRef
+      .orderByChild("revista")
+      .equalTo(revista)
+      .once("value");
     if (existingClientSnapshot.exists()) {
       ctx.status = 400; // Bad Request
       ctx.body = {
@@ -56,7 +57,7 @@ export const signupClient = async (ctx) => {
       revista: revista,
       importe: importeNumber, // Almacenar como número entero
       comercial: comercial,
-      formaDePago: formaDePago
+      formaDePago: formaDePago,
     });
 
     ctx.body = {
@@ -71,7 +72,7 @@ export const signupClient = async (ctx) => {
         revista: revista,
         importe: importeNumber, // Almacenar como número entero
         comercial: comercial,
-        formaDePago: formaDePago
+        formaDePago: formaDePago,
       },
     };
   } catch (error) {
@@ -83,107 +84,121 @@ export const signupClient = async (ctx) => {
   }
 };
 
-
 // Obtener todos los clientes de un usuario GET
 
 export const getClients = async (ctx) => {
-    const uid = ctx.params.uid; // UID del usuario
-    console.log(`UID recibido: ${uid}`);
-  
-    try {
-      const db = admin.database();
-      const clientsRef = db.ref("clients").child(uid); // Referencia a todos los clientes del usuario
-      const snapshot = await clientsRef.once("value");
-      const clients = snapshot.val();
-  
-      if (!clients) {
-        ctx.status = 404; 
-        ctx.body = {
-          message: "No se encontraron clientes para este usuario.",
-        };
-        return;
-      }
-  
+  const uid = ctx.params.uid; // UID del usuario
+  console.log(`UID recibido: ${uid}`);
+
+  try {
+    const db = admin.database();
+    const clientsRef = db.ref("clients").child(uid); // Referencia a todos los clientes del usuario
+    const snapshot = await clientsRef.once("value");
+    const clients = snapshot.val();
+
+    if (!clients) {
+      ctx.status = 404;
       ctx.body = {
-        message: "Clientes obtenidos",
-        clients: clients,
+        message: "No se encontraron clientes para este usuario.",
       };
-    } catch (error) {
-      console.error("Error en getClients:", error);
-      ctx.status = 400;
-      ctx.body = {
-        message: "Error obteniendo los clientes",
-        error: error.message,
-      };
+      return;
     }
-  };
-  
-  // elimminar cliente por id de usuario y id de cliente DELETE
 
-  export const deleteClient = async (ctx) => {
-    const uid = ctx.params.uid; // UID del usuario
-    const clientId = ctx.params.clientId; // ID del cliente a eliminar
-  
-    try {
-      const db = admin.database();
-      const clientRef = db.ref("clients").child(uid).child(clientId);
-      const clientSnapshot = await clientRef.once("value");
-  
-      if (!clientSnapshot.exists()) {
-        ctx.status = 404;
-        ctx.body = {
-          message: "Cliente no encontrado",
-        };
-        return;
-      }
-  
-      await clientRef.remove(); // Elimina el cliente de la base de datos
-  
+    ctx.body = {
+      message: "Clientes obtenidos",
+      clients: clients,
+    };
+  } catch (error) {
+    console.error("Error en getClients:", error);
+    ctx.status = 400;
+    ctx.body = {
+      message: "Error obteniendo los clientes",
+      error: error.message,
+    };
+  }
+};
+
+// elimminar cliente por id de usuario y id de cliente DELETE
+
+export const deleteClient = async (ctx) => {
+  const uid = ctx.params.uid; // UID del usuario
+  const clientId = ctx.params.clientId; // ID del cliente a eliminar
+
+  try {
+    const db = admin.database();
+    const clientRef = db.ref("clients").child(uid).child(clientId);
+    const clientSnapshot = await clientRef.once("value");
+
+    if (!clientSnapshot.exists()) {
+      ctx.status = 404;
       ctx.body = {
-        message: "Cliente eliminado",
+        message: "Cliente no encontrado",
       };
-    } catch (error) {
-      console.error("Error en deleteClient:", error);
-      ctx.status = 400;
-      ctx.body = {
-        message: "Error eliminando el cliente",
-        error: error.message,
-      };
+      return;
     }
-  };
 
-  // Actualizar cliente por id de usuario y id de cliente PUT
+    await clientRef.remove(); // Elimina el cliente de la base de datos
 
-  export const updateClient = async (ctx) => {
-    const uid = ctx.params.uid; // UID del usuario
-    const clientId = ctx.params.clientId; // ID del cliente a actualizar
-  
-    try {
-      const db = admin.database();
-      const clientRef = db.ref("clients").child(uid).child(clientId);
-      const clientSnapshot = await clientRef.once("value");
-  
-      if (!clientSnapshot.exists()) {
-        ctx.status = 404;
-        ctx.body = {
-          message: "Cliente no encontrado",
-        };
-        return;
-      }
-  
-      const {
-        cliente,
-        email,
-        telefono,
-        direccion,
-        fechaCreacion,
-        revista,
-        importe,
-        comercial,
-        formaDePago
-      } = ctx.request.body;
-  
-      await clientRef.update({
+    ctx.body = {
+      message: "Cliente eliminado",
+    };
+  } catch (error) {
+    console.error("Error en deleteClient:", error);
+    ctx.status = 400;
+    ctx.body = {
+      message: "Error eliminando el cliente",
+      error: error.message,
+    };
+  }
+};
+
+// Actualizar cliente por id de usuario y id de cliente PUT
+
+export const updateClient = async (ctx) => {
+  const uid = ctx.params.uid; // UID del usuario
+  const clientId = ctx.params.clientId; // ID del cliente a actualizar
+
+  try {
+    const db = admin.database();
+    const clientRef = db.ref("clients").child(uid).child(clientId);
+    const clientSnapshot = await clientRef.once("value");
+
+    if (!clientSnapshot.exists()) {
+      ctx.status = 404;
+      ctx.body = {
+        message: "Cliente no encontrado",
+      };
+      return;
+    }
+
+    const {
+      cliente,
+      email,
+      telefono,
+      direccion,
+      fechaCreacion,
+      revista,
+      importe,
+      comercial,
+      formaDePago,
+    } = ctx.request.body;
+
+    await clientRef.update({
+      cliente: cliente,
+      email: email,
+      telefono: telefono,
+      direccion: direccion,
+      fechaCreacion: fechaCreacion,
+      revista: revista,
+      importe: importe,
+      comercial: comercial,
+      formaDePago: formaDePago,
+    });
+
+    ctx.body = {
+      message: "Cliente actualizado",
+      client: {
+        id: clientId,
         cliente: cliente,
         email: email,
         telefono: telefono,
@@ -192,30 +207,15 @@ export const getClients = async (ctx) => {
         revista: revista,
         importe: importe,
         comercial: comercial,
-        formaDePago: formaDePago
-      });
-  
-      ctx.body = {
-        message: "Cliente actualizado",
-        client: {
-          id: clientId,
-          cliente: cliente,
-          email: email,
-          telefono: telefono,
-          direccion: direccion,
-          fechaCreacion: fechaCreacion,
-          revista: revista,
-          importe: importe,
-          comercial: comercial,
-          formaDePago: formaDePago
-        },
-      };
-    } catch (error) {
-      console.error("Error en updateClient:", error);
-      ctx.status = 400;
-      ctx.body = {
-        message: "Error actualizando el cliente",
-        error: error.message,
-      };
-    }
-  };
+        formaDePago: formaDePago,
+      },
+    };
+  } catch (error) {
+    console.error("Error en updateClient:", error);
+    ctx.status = 400;
+    ctx.body = {
+      message: "Error actualizando el cliente",
+      error: error.message,
+    };
+  }
+};
