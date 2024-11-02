@@ -3,7 +3,7 @@ import Router from "koa-router";
 import bodyParser from "koa-bodyparser";
 import dotenv from "dotenv";
 import admin from "firebase-admin";
-const serviceAccount = require("../keys/client-database-68929-firebase-adminsdk-h83tf-d8fedd45a0.json");
+import serviceAccount from "../src/keys/client-database-68929-firebase-adminsdk-h83tf-d8fedd45a0.json" assert { type: "json" };
 import cors from "@koa/cors";
 import { createUser, loginUser } from "./controllers/authController.js";
 import {
